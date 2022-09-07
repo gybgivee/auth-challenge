@@ -1,10 +1,11 @@
 // Load our .env file
 require('dotenv').config();
-
 // Import express and cors
 const express = require('express');
-const cors = require('cors');
+require('express-async-errors');
 
+const cors = require('cors');
+const {auth} = require('./middleware/auth');
 // Set up express
 const app = express();
 app.disable('x-powered-by');
@@ -15,8 +16,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-
-
 const userRouter = require('./routers/user');
 app.use('/user', userRouter);
 
@@ -24,6 +23,13 @@ const movieRouter = require('./routers/movie');
 app.use('/movie', movieRouter);
 
 
+/*
+app.use((error, req, res, next) => {
+    if (error instanceof JsonWebTokenError) {
+        return res.status(400).json({ error: 'Invalid Token' });
+    }
+    res.status(500).json({ error: 'Internal Server Error' });
+});*/
 
 
 // Set up a default "catch all" route to use when someone visits a route

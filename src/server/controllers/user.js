@@ -1,36 +1,46 @@
 const bcrypt = require('bcrypt');
+
 const jwt = require('jsonwebtoken');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-
-const jwtSecret = 'mysecret';
-
-const register = async (req, res) => {
+//const jwtSecret = 'mysecret';
+const {
+    createUser,
+    queryUserByUSername
+} = require('../models/user');
+const {
+    isPasswordMatch
+} = require('../utils/hashing');
+const { createToken } = require('../utils/token');
+const register = async (req, res, next) => {
     const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ error: "Missing fields in request body" });
+    }
 
-    const createdUser = null;
+    const user = await createUser(req.body);
+    const { status, data } = user;
 
-    res.json({ data: createdUser });
+    return res.status(status).json({ data });
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
     const { username, password } = req.body;
 
-    const foundUser = null;
-
-    if (!foundUser) {
+    const foundUser = await queryUserByUSername(username);
+    const { status, data } = foundUser;
+    if (!data) {
         return res.status(401).json({ error: 'Invalid username or password.' });
     }
 
-    const passwordsMatch = false;
+    const passwordsMatch = await isPasswordMatch(password,);
 
     if (!passwordsMatch) {
         return res.status(401).json({ error: 'Invalid username or password.' });
     }
 
-    const token = null;
+    const token = createToken(username);
+    localStorage.setItem('authentication', token);
 
-    res.json({ data: token });
+    return res.status(status).json({ data });
 };
 
 module.exports = {

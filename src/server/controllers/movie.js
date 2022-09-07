@@ -1,16 +1,14 @@
 const jwt = require('jsonwebtoken');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-
 const jwtSecret = 'mysecret';
 
-const getAllMovies = async (req, res) => {
+
+const getAllMovies = async (req, res, next) => {
     const movies = await prisma.movie.findMany();
 
     res.json({ data: movies });
 };
 
-const createMovie = async (req, res) => {
+const createMovie = async (req, res, next) => {
     const { title, description, runtimeMins } = req.body;
 
     try {
