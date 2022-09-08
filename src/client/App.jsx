@@ -7,6 +7,8 @@ const apiUrl = 'http://localhost:4000';
 
 function App() {
   const [movies, setMovies] = useState([]);
+  const [registerResponse, setRegisterResponse] = useState('');
+  const [loginResponse, setLoginResponse] = useState('');
 
   useEffect(() => {
     fetch(`${apiUrl}/movie`)
@@ -15,15 +17,41 @@ function App() {
   }, []);
 
   const handleRegister = async ({ username, password }) => {
-    
+
+    try {
+
+      const respone = await fetch('http://localhost:4000/user/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await respone.json();
+      console.log(data.data);
+
+    } catch (error) {
+      console.log({ error});
+    }
   };
 
   const handleLogin = async ({ username, password }) => {
-    
+    try {
+
+      const respone = await fetch('http://localhost:4000/user/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await respone.json();
+      console.log({ data });
+      localStorage.setItem('authentication',`Bearer ${data.token}`);
+
+    } catch (e) {
+      console.log({ e });
+    }
   };
-  
+
   const handleCreateMovie = async ({ title, description, runtimeMins }) => {
-    
+
   }
 
   return (

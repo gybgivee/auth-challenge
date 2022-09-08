@@ -23,6 +23,7 @@ const createMovie = async(movie)=>{
                 runtimeMins
             }
         });
+        console.log({createMovie});
         return {status:201,data:{movie}};
 
     }catch(error){

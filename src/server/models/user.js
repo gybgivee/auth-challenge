@@ -13,7 +13,7 @@ const queryUserByUSername = async (username) => {
             }
         });
 
-        return { status: 200, data: { user },token };
+        return { status: 200, data: { user } };
 
     } catch (error) {
         console.log({ error });

@@ -2,7 +2,7 @@ const { verifyToken } = require('../utils/token');
 const { findUserByUsername } = require('../models/user');
 
 const auth = async (req, res,next) => {
-    console.log(req);
+   
     const [_, token] = req.get('authentication').split(' ');
    
     try {
@@ -12,7 +12,7 @@ const auth = async (req, res,next) => {
         req.user = user;
         
     } catch (error) {
-        console.log({error});
+        //console.log({error});
         return res.status(500).json({error: 'Auth Error'});
     }
     next();
