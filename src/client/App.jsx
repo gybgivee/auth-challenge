@@ -7,14 +7,25 @@ const apiUrl = 'http://localhost:4000';
 
 function App() {
   const [movies, setMovies] = useState([]);
-  const [registerResponse, setRegisterResponse] = useState('');
-  const [loginResponse, setLoginResponse] = useState('');
+  const [createMobvieError, setCreateMobvieError] = useState('');
+  const [loginError, setLoginError] = useState('');
 
   useEffect(() => {
+
     fetch(`${apiUrl}/movie`)
       .then(res => res.json())
-      .then(res => setMovies(res.data));
+      .then(res => setMovies(res.data.movies)
+      );
+
   }, []);
+
+  useEffect(() => {
+
+    fetch(`${apiUrl}/movie`)
+      .then(res => res.json());
+
+  }, [movies]);
+
 
   const handleRegister = async ({ username, password }) => {
 
@@ -25,11 +36,12 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
       });
+
       const data = await respone.json();
       console.log(data.data);
 
     } catch (error) {
-      console.log({ error});
+      console.log({ error });
     }
   };
 
@@ -41,9 +53,9 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
       });
+
       const data = await respone.json();
-      console.log({ data });
-      localStorage.setItem('authentication',`Bearer ${data.token}`);
+      data.token ? localStorage.setItem('authorization', data.token) : setLoginError(data.error);
 
     } catch (e) {
       console.log({ e });
@@ -51,7 +63,27 @@ function App() {
   };
 
   const handleCreateMovie = async ({ title, description, runtimeMins }) => {
+    try {
 
+      const token = localStorage.getItem('authorization');
+      const respone = await fetch('http://localhost:4000/movie', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ title, description, runtimeMins })
+      
+      });
+
+      const data = await respone.json();
+      console.log(data,data.data.movie);
+      // setContacts([...contacts, contact])
+      data.data.movie ?  setMovies([...movies, data.data.movie]): setCreateMobvieError(data.error);
+    
+    } catch (e) {
+      console.log({ e });
+    }
   }
 
   return (
@@ -61,13 +93,16 @@ function App() {
 
       <h1>Login</h1>
       <UserForm handleSubmit={handleLogin} />
+      {loginError && <p>{loginError}</p>}
 
       <h1>Create a movie</h1>
       <MovieForm handleSubmit={handleCreateMovie} />
 
+      {createMobvieError && <p>{createMobvieError}</p>}
+
       <h1>Movie list</h1>
       <ul>
-        {movies.map(movie => {
+        {movies && movies.map(movie => {
           return (
             <li key={movie.id}>
               <h3>{movie.title}</h3>

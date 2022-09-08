@@ -7,6 +7,6 @@ const {
 const router = express.Router();
 
 router.get('/', getAllMovies);
-router.post('/', setMovie);
+router.post('/',setMovie);
 
 module.exports = router;

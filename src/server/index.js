@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 // Load our .env file
 require('dotenv').config();
 // Import express and cors
@@ -22,14 +23,12 @@ app.use('/user', userRouter);
 const movieRouter = require('./routers/movie');
 app.use('/movie',auth, movieRouter);
 
-
-/*
 app.use((error, req, res, next) => {
-    if (error instanceof JsonWebTokenError) {
+    if (error instanceof jwt.JsonWebTokenError) {
         return res.status(400).json({ error: 'Invalid Token' });
     }
     res.status(500).json({ error: 'Internal Server Error' });
-});*/
+});
 
 
 // Set up a default "catch all" route to use when someone visits a route

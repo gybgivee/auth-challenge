@@ -1,20 +1,27 @@
 const { verifyToken } = require('../utils/token');
-const { findUserByUsername } = require('../models/user');
+const { queryUserByusername } = require('../models/user');
 
-const auth = async (req, res,next) => {
-   
-    const [_, token] = req.get('authentication').split(' ');
-   
-    try {
-   
-        const decoded = verifyToken(token);
-        const user = await findUserByUsername(decoded.username);
-        req.user = user;
-        
-    } catch (error) {
-        //console.log({error});
-        return res.status(500).json({error: 'Auth Error'});
+const auth = async (req, res, next) => {
+
+    if (req.method === 'POST') {
+
+        try {
+            const getToken = req.get('authorization');
+            const [_, token] = getToken ? getToken.split(' ') : '';
+            //const token = req.get('authentication');
+            console.log('token in auth', token);
+            const decoded = verifyToken(token);
+            console.log({ decoded });
+            const user = await queryUserByusername(decoded);
+            console.log(user);
+            req.user = user.data.user;
+
+            console.log(req.user.data);
+        } catch (error) {
+            console.log({ error });
+            return res.status(500).json({ error: 'Auth Error' });
+        }
     }
     next();
 };
-module.exports = {auth};
+module.exports = { auth };

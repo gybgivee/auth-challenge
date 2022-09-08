@@ -5,7 +5,7 @@ const {
     getHashPassword
 } = require('../utils/hashing');
 
-const queryUserByUSername = async (username) => {
+const queryUserByusername = async (username) => {
     try {
         const user = await prisma.user.findFirst({
             where: {
@@ -23,6 +23,7 @@ const queryUserByUSername = async (username) => {
 }
 const createUser = async (user) => {
     const { username, password } = user;
+    console.log({user});
     const hashedPassword = await getHashPassword(password);
     console.log({hashedPassword});
     try {
@@ -39,6 +40,6 @@ const createUser = async (user) => {
     }
 }
 module.exports = {
-    queryUserByUSername,
+    queryUserByusername,
     createUser
 }
